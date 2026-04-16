@@ -1,5 +1,14 @@
-checkpoints/
+# Python
 __pycache__/
 *.pyc
-.env
-node_modules/
+
+# Mac
+.DS_Store
+
+# Model weights
+*.pth
+backend/checkpoints/
+
+# Outputs
+outputs/
+*.obj
