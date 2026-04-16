@@ -1,5 +1,6 @@
 PROJECT STRUCTURE
 
+```text
 Image2Surface/
   backend/
     main.py
@@ -36,3 +37,4 @@ cd backend
 python3 main.py
 
 Output --> outputs/mesh.obj
+```
