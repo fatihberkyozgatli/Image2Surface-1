@@ -27,7 +27,7 @@ def generate_surface(image, z_scale, smooth_strength, downsample_scale):
     return vertices, faces, normals, vertex_colors
 
 def export_mesh(image, z_scale, smooth_strength, downsample_scale):
-    vertices, faces, normals = generate_surface(
+    vertices, faces, normals, vertex_colors = generate_surface(
         image, z_scale, smooth_strength, downsample_scale
     )
     base_dir = os.path.dirname(os.path.abspath(__file__))
