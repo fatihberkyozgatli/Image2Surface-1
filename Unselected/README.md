@@ -1,41 +1,54 @@
-# Image2Surface
+# Image2Surface - Unselected Architecture (Model-View-Controller)
 
 Convert 2D images to interactive 3D surface meshes using AI-powered depth estimation (Depth Anything V2).
 
 ## Overview
 
-Image2Surface is a full-stack application that estimates depth information from 2D images and converts them into interactive 3D surface meshes. The system consists of a modern web-based frontend built with Next.js and a Python-based backend API powered by FastAPI, utilizing deep learning models for pixel-level depth prediction.
+Image2Surface is a full-stack application that estimates depth information from 2D images and converts them into interactive 3D surface meshes. **This is the UNSELECTED implementation using a Model-View-Controller (MVC) Architecture**, emphasizing explicit domain modeling with coordinated request handling through controllers and services.
+
+The system consists of a modern web-based frontend built with Next.js and a Python-based backend API powered by FastAPI, utilizing deep learning models for pixel-level depth prediction.
 
 ## System Capabilities
 
 The application provides the following core capabilities:
 
-1. Image Upload: Users can upload 2D images in standard image formats
-2. Depth Estimation: Automated depth prediction using the Depth Anything V2 model
-3. Mesh Generation: Conversion of estimated depth maps to 3D triangulated surface meshes
-4. Mesh Interaction: Real-time 3D visualization with rotation, zoom, and pan controls
-5. Mesh Editing: Apply smoothing, sharpening, and scaling operations to generated meshes
-6. Mesh Reset: Restore original mesh before any edits
+1. **Image Upload**: Users can upload 2D images in standard image formats
+2. **Depth Estimation**: Automated depth prediction using the Depth Anything V2 model
+3. **Mesh Generation**: Conversion of estimated depth maps to 3D triangulated surface meshes
+4. **Mesh Interaction**: Real-time 3D visualization with rotation, zoom, and pan controls
+5. **Mesh Editing**: Apply smoothing, sharpening, and scaling operations to generated meshes
+6. **Mesh Reset**: Restore original mesh before any edits
 
 ## Project Structure
 
 ```
-Image2Surface/
+Unselected/
 ├── backend/
-│   ├── server.py              # FastAPI application and REST endpoints
-│   ├── application.py         # Mesh generation and OBJ export logic
-│   ├── processing.py          # Depth estimation and processing pipeline
+│   ├── app.py                 # FastAPI application setup (MVC Coordinator)
+│   ├── controllers/           # Request handlers and orchestration
+│   │   ├── health_controller.py
+│   │   ├── image_controller.py
+│   │   └── surface_controller.py
+│   ├── models/                # Domain models and data structures
+│   │   ├── image_model.py
+│   │   ├── mesh_model.py
+│   │   └── depth_model.py
+│   ├── services/              # Business logic and operations
+│   │   ├── image_service.py
+│   │   ├── depth_service.py
+│   │   └── mesh_service.py
 │   ├── depth_anything_v2/     # Depth estimation model implementation
 │   │   ├── dpt.py
 │   │   ├── dinov2.py
 │   │   └── dinov2_layers/
 │   ├── checkpoints/           # Model weights directory
 │   ├── uploads/               # Temporary image storage
-│   └── venv/                  # Python virtual environment
+│   ├── venv/                  # Python virtual environment
+│   └── requirements.txt       # Python dependencies
 │
 ├── frontend/
 │   ├── app/
-│   │   ├── page.tsx           # Main application page
+│   │   ├── page.tsx           # Main application page (View Layer)
 │   │   ├── layout.tsx         # Root layout
 │   │   └── globals.css        # Global styles
 │   ├── components/
@@ -44,7 +57,7 @@ Image2Surface/
 │   │   ├── edit-controls.tsx  # Mesh editing controls
 │   │   └── ui/                # Reusable UI components
 │   ├── lib/
-│   │   ├── api.ts             # API client functions
+│   │   ├── api.ts             # API client abstraction (Communication Layer)
 │   │   ├── types.ts           # TypeScript type definitions
 │   │   └── utils.ts           # Utility functions
 │   ├── package.json           # Node.js dependencies
@@ -53,84 +66,101 @@ Image2Surface/
 └── README.md                  # This file
 ```
 
-## System Architecture
+## Architecture: Model-View-Controller Pattern (UNSELECTED)
 
-The project implements a **Layered Architecture** pattern with the following layers:
+### Architectural Rationale
+
+The **Model-View-Controller (MVC) Architecture** was evaluated because:
+
+- **Explicit domain modeling**: Models are first-class domain objects
+- **Coordinated request handling**: Controllers orchestrate business logic
+- **Reusable services**: Business logic is centralized and sharable
+- **Clear folder structure**: Instant understanding of codebase organization
+- **Type-safe operations**: Models carry both data and behavior
 
 ### Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Presentation Layer (Frontend)                               │
+│ View Layer (Frontend)                                        │
 │ Next.js 14 React Application with TypeScript & Tailwind    │
 ├─────────────────────────────────────────────────────────────┤
-│ - ImageUpload Component: File selection and preview        │
-│ - SurfaceViewer Component: 3D visualization (Three.js)     │
-│ - EditControls Component: Mesh editing operations          │
-│ - UI Components: Buttons, sliders, form controls           │
+│ - ImageUpload: File selection and preview                  │
+│ - SurfaceViewer: 3D visualization with Three.js            │
+│ - EditControls: Mesh editing operations                    │
+│ - UI Components: Buttons, sliders, controls                │
 ├─────────────────────────────────────────────────────────────┤
 │ Communication Layer                                         │
 │ Axios HTTP Client with REST API Abstraction                │
 ├─────────────────────────────────────────────────────────────┤
-│ API Layer (Backend)                                         │
-│ FastAPI Server with RESTful Endpoints                       │
+│ Controller Layer (Backend)                                  │
+│ Route Handlers Orchestrating Request Processing            │
+│ - ImageController: Handles image operations               │
+│ - SurfaceController: Orchestrates mesh workflows           │
+│ - HealthController: System health checks                   │
 ├─────────────────────────────────────────────────────────────┤
-│ Business Logic Layer                                        │
-│ - Image Processing: OpenCV operations                       │
-│ - Depth Estimation: Depth Anything V2 inference            │
-│ - Mesh Generation: Vertex and face computation             │
-│ - Mesh Editing: Smoothing, sharpening, scaling             │
+│ Service Layer (Business Logic)                              │
+│ - ImageService: Image operations and validation            │
+│ - DepthService: Depth estimation pipeline                  │
+│ - MeshService: Mesh generation and editing                 │
 ├─────────────────────────────────────────────────────────────┤
-│ Deep Learning Model Layer                                   │
-│ PyTorch-based Depth Anything V2 Model                       │
+│ Model Layer (Domain Objects)                                │
+│ - ImageModel: Image representation and metadata            │
+│ - MeshModel: Mesh structure with vertices/faces            │
+│ - DepthModel: Depth map and processing state               │
 ├─────────────────────────────────────────────────────────────┤
-│ Data Storage Layer                                          │
-│ File system storage for images and generated meshes        │
+│ Infrastructure Layer                                        │
+│ PyTorch models, OpenCV, file system, storage               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Component Interactions
+### Component Interactions (MVC)
 
-1. **Presentation → Communication**: User actions trigger API calls through the Axios client
-2. **Communication → API**: HTTP requests are sent to FastAPI backend endpoints
-3. **API → Business Logic**: FastAPI routes delegate to processing modules
-4. **Business Logic → Model**: Processing pipeline invokes the depth estimation model
-5. **Model → Storage**: Results are stored in memory and file system
-6. **Storage → API → Communication → Presentation**: Data flows back to user interface
+1. **View → Controller**: User action triggers HTTP request
+2. **Controller**: Routes request to appropriate service
+3. **Service → Model**: Business logic creates/manipulates domain objects
+4. **Model**: Domain objects encapsulate data and operations
+5. **Service**: Business logic orchestrates object interactions
+6. **Controller**: Formats response from models
+7. **Communication → View**: Response flows back to user
 
 ### Data Flow
 
-1. User uploads image through web interface
-2. Frontend sends image file to backend via POST /api/image/upload
-3. Backend stores image temporarily and returns image_id
-4. User triggers mesh generation
-5. Frontend sends POST request to /api/surface/generate with image_id
-6. Backend processes image through depth estimation pipeline
-7. Mesh data (vertices, indices) returned to frontend
-8. Three.js renderer displays mesh with interactive controls
-9. User applies editing operations which are processed similarly
-10. Updated mesh is returned and re-rendered
+1. User uploads image through web interface (View)
+2. Frontend sends image to backend via HTTP (Communication)
+3. ImageController receives POST request and delegates
+4. ImageService validates and processes image
+5. ImageModel created with metadata
+6. Controller returns response (Model serialized to JSON)
+7. User triggers mesh generation
+8. SurfaceController receives POST with image_id
+9. SurfaceController delegates to MeshService
+10. MeshService uses DepthService for estimation
+11. MeshModel created with vertices and indices
+12. Models are serialized and returned to View
+13. Three.js renders mesh (View)
+14. Editing requests follow controller → service → model chain
 
 ## Technology Stack
 
 ### Backend Technologies
 
-- Python 3.8+ (Programming language)
-- FastAPI 0.104+ (Web framework for RESTful API)
-- Uvicorn 0.24+ (ASGI server)
-- PyTorch 2.0+ (Deep learning framework)
-- OpenCV 4.8+ (Computer vision library)
-- NumPy 1.24+ (Numerical computing)
+- **Python 3.13** (Programming language)
+- **FastAPI 0.104+** (Web framework for RESTful API)
+- **Uvicorn 0.24+** (ASGI server)
+- **PyTorch 2.0+** (Deep learning framework)
+- **OpenCV 4.8+** (Computer vision library)
+- **NumPy 1.24+** (Numerical computing)
 
 ### Frontend Technologies
 
-- Next.js 14 (React framework)
-- React 18 (UI library)
-- TypeScript 5 (Type-safe JavaScript)
-- Three.js (3D graphics library)
-- React Three Fiber (React renderer for Three.js)
-- Tailwind CSS 3 (Utility-first CSS framework)
-- Axios (HTTP client)
+- **Next.js 16** (React framework with TypeScript)
+- **React 18** (UI library)
+- **TypeScript 5** (Type-safe JavaScript)
+- **Three.js** (3D graphics library)
+- **React Three Fiber** (React renderer for Three.js)
+- **Tailwind CSS 3** (Utility-first CSS framework)
+- **Axios** (HTTP client)
 
 ## System Requirements
 
@@ -152,7 +182,7 @@ The project implements a **Layered Architecture** pattern with the following lay
 
 1. Navigate to the backend directory:
 ```bash
-cd backend
+cd Unselected/backend
 ```
 
 2. Create a Python virtual environment:
@@ -193,7 +223,7 @@ Model download size: approximately 90 MB
 
 1. Navigate to the frontend directory:
 ```bash
-cd frontend
+cd Unselected/frontend
 ```
 
 2. Install Node.js dependencies:
@@ -216,13 +246,13 @@ If not specified, the application defaults to `http://localhost:8000/api`.
 
 1. Ensure Python virtual environment is activated:
 ```bash
-cd backend
+cd Unselected/backend
 source venv/bin/activate  # On macOS/Linux
 ```
 
 2. Start the FastAPI server:
 ```bash
-python server.py
+python -m uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
 The backend API will be available at:
@@ -239,7 +269,7 @@ Success indicators:
 
 1. Navigate to frontend directory:
 ```bash
-cd frontend
+cd Unselected/frontend
 ```
 
 2. Start the development server:
@@ -250,7 +280,7 @@ npm run dev
 The frontend will be available at: http://localhost:3000
 
 Success indicators:
-- Console output: "started ▼ Next.js development server"
+- Console output: "▲ Next.js development server ready"
 - Application loads at http://localhost:3000
 - Can interact with upload interface
 
@@ -287,10 +317,7 @@ Response: {
 POST /api/surface/generate
 Content-Type: application/json
 Body: {
-  "image_id": "<uuid>",
-  "z_scale": 1.0,
-  "smooth_strength": 5,
-  "downsample_scale": 0.5
+  "image_id": "<uuid>"
 }
 
 Response: {
@@ -409,19 +436,6 @@ npm install
 - Check NEXT_PUBLIC_API_URL environment variable
 - Verify CORS is enabled on backend
 
-## Key Endpoints and Functionality
-
-| Component | Purpose | Technology |
-|-----------|---------|-----------|
-| server.py | FastAPI application and route definitions | FastAPI, Uvicorn |
-| application.py | Mesh generation and OBJ export | OpenCV, NumPy |
-| processing.py | Depth estimation and image processing | PyTorch, OpenCV |
-| page.tsx | Main application view | React, TypeScript |
-| image-upload.tsx | Image selection component | React |
-| surface-viewer.tsx | 3D visualization component | Three.js, React Three Fiber |
-| edit-controls.tsx | Mesh editing interface | React |
-| api.ts | API client abstraction | Axios |
-
 ## Performance Characteristics
 
 - Image upload: < 1 second (limited by network)
@@ -439,117 +453,77 @@ npm install
    - Scale height
    - Smooth surface
    - Sharpen details
-5. **Download** - Export as OBJ (coming soon)
+5. **Reset** - Return to original mesh state
 
-## Performance
+## Architectural Differences: Selected vs Unselected
 
-- **Upload**: 100-200ms
-- **Generate** (GPU): 2-5s
-- **Generate** (CPU): 30-60s
-- **Edit**: 500-1000ms
-- **Model size**: ~350MB (ViT-S)
+### File Organization
 
-## Requirements
+**Selected (Layered):**
+- `server.py` - All routes in one file, organized by HTTP method
+- Direct function calls between layers
+- Minimal folder structure for backend
 
-### Minimum
-- Python 3.8+
-- Node.js 18+
-- 4GB RAM
-- 4GB disk space
+**Unselected (MVC):**
+- `controllers/` - Separate files per resource/domain
+- `models/` - Domain object definitions
+- `services/` - Business logic separated from routing
+- Clear separation of concerns by folder
 
-### Recommended
-- NVIDIA GPU with CUDA support (or Apple Silicon for MPS)
-- 8GB+ RAM
-- SSD for faster I/O
+### Request Flow
 
-## Configuration
-
-### Environment Variables
-
-**Frontend** (.env.local):
+**Selected (Layered):**
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
+Request → FastAPI Route → Processing Function → Infrastructure
 ```
 
-**Backend** (environment):
+**Unselected (MVC):**
 ```
-DEVICE=cuda  # cuda, mps, or cpu
-PORT=8000
-```
-
-## Build Models
-
-- **Depth Anything V2** - Self-supervised vision transformer for monocular depth estimation
-- **DINOv2** - Self-supervised vision transformer backbone
-- **DPT** - Dense Prediction Transformer for depth-to-surface conversion
-
-## Troubleshooting
-
-**Backend won't start**: Ensure port 8000 is free
-```bash
-lsof -ti:8000 | xargs kill -9
+Request → Controller → Service → Model Operations → Infrastructure
 ```
 
-**Model download fails**: Download manually to `backend/checkpoints/`
+### Data Handling
 
-**Frontend shows "Backend not reachable"**: Check backend is running on port 8000
+**Selected:**
+- Data transformed at API boundaries
+- Database models optional
+- Focus on stateless operations
 
-See [SETUP.md](SETUP.md#troubleshooting) for more solutions.
+**Unselected:**
+- Domain models carry data and operations
+- Models are explicit representations of domain concepts
+- Type-safe model instances throughout flow
 
-## Development
+### Advantages of This (Unselected) Approach
 
-### Backend Development
-```bash
-cd backend
-pip install -r ../requirements.txt
-python -m pytest  # Run tests
-python server.py --reload  # Hot reload
-```
+- **Explicit Models**: Domain concepts are represented as first-class objects
+- **Coordinated Handling**: Controllers orchestrate complex workflows
+- **Reusable Components**: Services can be composed and reused
+- **Clear Organization**: Folder structure immediately conveys architecture
+- **Self-Documenting**: Code structure mirrors domain understanding
 
-### Frontend Development
-```bash
-cd frontend
-npm run dev       # Development server
-npm run build     # Production build
-npm run lint      # ESLint check
-```
+### Trade-offs
 
-## Contributing
+- **More Files**: Controllers and services add indirection
+- **More Abstractions**: Additional layers of abstraction vs. direct calls
+- **Slightly More Complex**: Requires understanding MVC pattern
+- **Model Serialization**: Models must be serialized to JSON for responses
 
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+## Summary
 
-## License
+**Unselected Architecture: Model-View-Controller**
 
-This project uses:
-- **Depth Anything V2**: [CC-BY-SA-4.0](https://github.com/LiheYoung/Depth-Anything-V2)
-- **DINOv2**: [CC-BY-NC 4.0](https://github.com/facebookresearch/dinov2)
+**Advantages:**
+- Explicit domain modeling with first-class models
+- Coordinated request handling through controllers
+- Clear folder structure and organization
+- Reusable and composable service layer
+- Self-documenting code through structure
 
-## Credits
+**Trade-offs:**
+- More files and deeper folder structure
+- Additional abstraction layers
+- Model-to-JSON serialization needed
+- Slightly steeper learning curve for teams unfamiliar with MVC
 
-- Depth Anything V2: [LiheYoung](https://github.com/LiheYoung/Depth-Anything-V2)
-- DINOv2: [Meta AI](https://github.com/facebookresearch/dinov2)
-- 3D Visualization: [Threejs](https://threejs.org/) + [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/)
-
-## Support
-
-- 📖 [Setup Guide](SETUP.md)
-- 📚 [API Docs](http://localhost:8000/docs) (when running)
-- 🐛 [Issues](https://github.com/Patriciomrt05/Image2Surface/issues)
-
-## Roadmap
-
-- [ ] Model export (OBJ, STL, GLB)
-- [ ] Batch processing
-- [ ] Advanced editing tools
-- [ ] Real-time preview improvements
-- [ ] Mobile app
-- [ ] Multi-image composition
-- [ ] Point cloud export
-
----
-
-Made with ❤️ for CS 5319 (Spring 2026)
+This architecture is ideal for projects that value explicit domain modeling and organized code structure, especially as the codebase grows in complexity.

@@ -1,18 +1,17 @@
-# Python
 __pycache__/
 *.pyc
-
-# Mac
+**/venv/
+**/.venv/
 .DS_Store
 **/.DS_Store
-
-# Model weights
 *.pth
-backend/checkpoints/
-
-# Outputs
+**/checkpoints/
 outputs/
 *.obj
-
-# backup ui
-frontend/ui.py
+**/ui.py
+**/uploads/
+.env
+.env.local
+**/node_modules/
+**/.next/
+**/dist/
