@@ -1,0 +1,11 @@
+gradio_imageslider
+gradio
+matplotlib
+opencv-python
+torch
+torchvision
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+numpy
